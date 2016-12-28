@@ -1,4 +1,4 @@
-﻿// Copyright 2015-2016 Brian Smith.
+// Copyright 2015-2016 Brian Smith.
 //
 // Permission to use, copy, modify, and/or distribute this software for any
 // purpose with or without fee is hereby granted, provided that the above
@@ -27,7 +27,7 @@ use core::marker::PhantomData;
 pub fn verify_less_than<A: core::convert::AsRef<BIGNUM>,
                         B: core::convert::AsRef<BIGNUM>>(a: &A, b: &B)
         -> Result<(), error::Unspecified> {
-    let r = unsafe { GFp_BN_cmp(a.as_ref(), b.as_ref()) };
+    let r = unsafe { GFp_BN_ucmp(a.as_ref(), b.as_ref()) };
     if !(r < 0) {
         return Err(error::Unspecified);
     }
@@ -497,7 +497,7 @@ extern {
                      -> *mut BIGNUM;
     fn GFp_BN_bn2bin_padded(out_: *mut u8, len: c::size_t, in_: &BIGNUM)
                             -> c::int;
-    fn GFp_BN_cmp(a: &BIGNUM, b: &BIGNUM) -> c::int;
+    fn GFp_BN_ucmp(a: &BIGNUM, b: &BIGNUM) -> c::int;
     fn GFp_BN_get_positive_u64(a: &BIGNUM) -> u64;
     fn GFp_BN_equal_consttime(a: &BIGNUM, b: &BIGNUM) -> c::int;
     fn GFp_BN_is_odd(a: &BIGNUM) -> c::int;
@@ -617,7 +617,7 @@ mod tests {
     }
 
     fn assert_elem_eq<F: Field>(a: &ElemDecoded<F>, b: &ElemDecoded<F>) {
-        let r = unsafe { GFp_BN_cmp(a.value.as_ref(), b.value.as_ref()) };
+        let r = unsafe { GFp_BN_ucmp(a.value.as_ref(), b.value.as_ref()) };
         assert_eq!(r, 0)
     }
 }
